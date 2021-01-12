@@ -1,0 +1,50 @@
+
+#form{
+    margin-top: 50px;
+    width:80%;
+    outline: auto;
+    padding: 10px;
+    height: 250px;
+}
+
+#formTitle{
+    margin: auto;
+    font-size: 30px;
+    padding-bottom: 20px;
+}
+
+#frmSubmit{
+}
+
+#answer1Input{
+    margin-bottom: 20px;
+}
+
+.form-group{
+    width:100%;
+    margin-top:50px;
+}
+
+.card{
+    width: 70%;
+    height: 200px;
+    margin: auto;
+    margin-top: 50px;
+    float: none;
+    margin-bottom: 10px;
+    outline: auto;
+}
+
+.card-title{
+    margin: auto;
+    font-size: 30px;
+}
+
+.row{
+    width:100%;
+    margin: auto;
+}
+
+.btn{
+    width: 50%;
+}

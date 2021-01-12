@@ -6,6 +6,7 @@ app.use(bodyParser.text());
 const path = require('path');
 const http = require('http').Server(app);
 const server = require('socket.io')(http);
+app.use(express.static(__dirname + '/'));
 
 const db = require('./db');
 const { json } = require('express');
@@ -24,6 +25,7 @@ app.get('/getQuestions',(req,res)=>{
         if(err)
             console.log(err);
         else{
+            documents.reverse();
             console.log(documents);
             res.json(documents);
         }

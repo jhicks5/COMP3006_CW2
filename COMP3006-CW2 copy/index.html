@@ -9,22 +9,27 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <title>Should I?</title>
+
+    <nav class="navbar navbar-dark bg-dark">
+        <a class="navbar-brand text-white">Should I?</a>
+    </nav>
+
   </head>
   <body>
-    <div class="container">
-        <form id="form">
+    <div class="container" style="width:100%">
+        <form class="row" id="form">
             <div class="form-group row">
-                <label for="question">Post a Question</label>
+                <label class="title" id="formTitle" for="question">Post a Question</label>
                 <input class="form-control form-control-lg" id="questionInput" type="text" placeholder="What's Your Question?">
                 <input class="form-control col-md-6" type="text" id="answer1Input" placeholder="Answer 1">
                 <input class="form-control col-md-6" type="text" id="answer2Input" placeholder="Answer 2">
-                <button type="submit" class="btn btn-primary">Post!</button>
+                <button type="submit" class="btn btn-info" style="margin:auto" id="frmSubmit">Post!</button>
             </div>
         </form>
 
         <div class="row">
-            <ul class="list-group" id="display">
-
+            <ul class="container" id="display">
+                
             </ul>
         </div>
     </div>
@@ -126,16 +131,26 @@
             }
 
             const buildTemplate = (question,ids)=>{
-                console.log("CREATING ITEM")
-                return `<li class="list-group-item" id="${ids.listItemID}>
+                const totalVotes = question.ans1votes + question.ans2votes;
+                const sizeLeft = question.ans1votes / totalVotes * 100;
+                console.log("Size left: ",sizeLeft);
+                const sizeRight = 100 - sizeLeft;
+                console.log("Size Right: ",sizeRight);
+                console.log("Total votes: ",totalVotes);
+                return `<div class="card" id="${ids.listItemID}>
                             <div class="row">
-                                <div class="col-md-4" id="${ids.questionID}">${question.question}</div>
-                                <div class="col-md-4">
-                                    <button type="button" id="${ids.vote1ID}">${question.answer1} | Votes: ${question.ans1votes}</button>
-                                    <button type="button" id="${ids.vote2ID}">${question.answer2} | Votes: ${question.ans2votes}</button>
+                                <div class="card-title " id="${ids.questionID}">${question.question}</div>
+                                    <div class="btn-group">
+                                        <div class="btn btn-primary" id="voteBarLeft" style="width:${sizeLeft}%"></div>
+                                        <div class="btn btn-danger" id="voteBarRight" style="width:${sizeRight}%"></div>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button class="btn" type="button" id="${ids.vote1ID}">${question.answer1} | Votes: ${question.ans1votes}</button>
+                                        <button class="btn" type="button" id="${ids.vote2ID}">${question.answer2} | Votes: ${question.ans2votes}</button>
+                                    </div>
                                 </div>
                             </div>
-                        </li>`;
+                        </div>`;
             }
 
             const displayQuestions = (data)=>{
@@ -161,7 +176,7 @@
                 }).then((data)=>{
                     if(data.result.ok == 1 && data.result.n ==1){
                         let ids = buildIDs(data.document);
-                        display.append(buildTemplate(data.document,ids));
+                        display.prepend(buildTemplate(data.document,ids));
                         voteOne(data.document,ids.questionID,ids.vote1ID,ids.vote2ID);
                         voteTwo(data.document,ids.questionID,ids.vote1ID,ids.vote2ID)
                     }
@@ -170,5 +185,6 @@
             })
         });
     </script>
+    <link rel="stylesheet" type="text/css" href="index.css" />
   </body>
 </html>
