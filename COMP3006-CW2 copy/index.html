@@ -62,11 +62,10 @@
 
             getQuestions()
             
-            const voteOne = (question,questionID,vote1ID)=>{
+            const voteOne = (question,questionID,vote1ID,vote2ID)=>{
                 let vote1btn = $(`#${vote1ID}`);
                 let voteType = "ans1votes"
                 vote1btn.click(()=>{
-                    console.log(vote1btn, 'vote 1clicked');
                     fetch(`/${question._id}`,{
                         method : "put",
                         body : "ans1votes",
@@ -77,8 +76,35 @@
                         return response.json();
                     }).then((data)=>{
                         if(data.ok == 1){
-                            let questionIndex = $(`#${vote1ID}`);
-                            questionIndex.html(question.answer1+" | Votes: "+data.value.ans1votes);
+                            let answerIndex = $(`#${vote1ID}`);
+                            answerIndex.html(question.answer1+" | Votes: "+data.value.ans1votes);
+                            $('#'+vote1ID).attr('disabled','disabled');
+                            $('#'+vote1ID).css('background-color','aquamarine');
+                            $('#'+vote2ID).attr('disabled','disabled');
+                        }
+                    });
+                });
+            };
+
+            const voteTwo = (question,questionID,vote1ID,vote2ID)=>{
+                let vote2btn = $(`#${vote2ID}`);
+                let voteType = "ans2votes"
+                vote2btn.click(()=>{
+                    fetch(`/${question._id}`,{
+                        method : "put",
+                        body : "ans2votes",
+                        headers : {
+                        "Content-Type" : "text/plain; charset=utf-8"
+                    }
+                    }).then((response)=>{
+                        return response.json();
+                    }).then((data)=>{
+                        if(data.ok == 1){
+                            let questionIndex = $(`#${vote2ID}`);
+                            questionIndex.html(question.answer2+" | Votes: "+data.value.ans2votes);
+                            $('#'+vote2ID).attr('disabled','disabled');
+                            $('#'+vote2ID).css('background-color','aquamarine');
+                            $('#'+vote1ID).attr('disabled','disabled');
                         }
                     });
                 });
@@ -116,8 +142,8 @@
                 data.forEach((question)=>{
                     let ids = buildIDs(question);
                     display.append(buildTemplate(question,ids));
-                    voteOne(question,ids.questionID,ids.vote1ID);
-                    /*voteTwo(question,ids.vote2ID)*/
+                    voteOne(question,ids.questionID,ids.vote1ID,ids.vote2ID);
+                    voteTwo(question,ids.questionID,ids.vote1ID,ids.vote2ID)
                 })
             }
 
@@ -136,8 +162,8 @@
                     if(data.result.ok == 1 && data.result.n ==1){
                         let ids = buildIDs(data.document);
                         display.append(buildTemplate(data.document,ids));
-                        voteOne(data.document,ids.questionID,ids.vote1ID);
-                        /*voteTwo(question,ids.vote2ID)*/
+                        voteOne(data.document,ids.questionID,ids.vote1ID,ids.vote2ID);
+                        voteTwo(data.document,ids.questionID,ids.vote1ID,ids.vote2ID)
                     }
                     resetFormInput();
                 })
