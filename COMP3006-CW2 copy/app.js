@@ -2,11 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
+app.use(bodyParser.text());
 const path = require('path');
 const http = require('http').Server(app);
 const server = require('socket.io')(http);
 
 const db = require('./db');
+const { json } = require('express');
 const collection = 'questions';
 
 app.get('/',(req,res)=>{
@@ -30,10 +32,10 @@ app.get('/getQuestions',(req,res)=>{
 
 app.put('/:id',(req,res)=>{
     const questionID = req.params.id;
-    const userInput = req.body;
-
+    const voteType = req.body;
+    console.log('vote is', voteType)
     db.getDB().collection(collection).findOneAndUpdate({_id : db.getPrimaryKey(questionID)},
-    {$set : {question : userInput.question},$inc : {ans1votes : 1}},{returnOriginal : false},(err,result)=>{
+    {$inc : {[voteType] : 1}},{returnOriginal : false},(err,result)=>{
         if(err)
             console.log(err);
         else{
@@ -44,6 +46,7 @@ app.put('/:id',(req,res)=>{
 
 app.post('/',(req,res)=>{
     const userInput = req.body;
+    console.log(userInput);
     db.getDB().collection(collection).insertOne(userInput,(err,result)=>{
         if(err)
             console.log(err);
