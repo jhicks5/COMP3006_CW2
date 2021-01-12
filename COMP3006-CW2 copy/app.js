@@ -32,7 +32,8 @@ app.put('/:id',(req,res)=>{
     const questionID = req.params.id;
     const userInput = req.body;
 
-    db.getDB().collection(collection).findOneAndUpdate({_id : db.getPrimaryKey(questionID)},{$set : {question : userInput.question}},{returnOriginal : false},(err,result)=>{
+    db.getDB().collection(collection).findOneAndUpdate({_id : db.getPrimaryKey(questionID)},
+    {$set : {question : userInput.question},$inc : {ans1votes : 1}},{returnOriginal : false},(err,result)=>{
         if(err)
             console.log(err);
         else{

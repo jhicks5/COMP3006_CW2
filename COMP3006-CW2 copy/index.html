@@ -65,19 +65,18 @@
             const voteOne = (question,questionID,vote1ID)=>{
                 let vote1btn = $(`#${vote1ID}`);
                 vote1btn.click(()=>{
-                    console.log('clicked');
+                    console.log(vote1btn, 'vote 1clicked');
                     fetch(`/${question._id}`,{
                         method : "put",
                         headers : {
                             "content-Type" : "application/json; charset=utf-8"
                         },
-                        body : JSON.stringify({question : ans1votes+1})
                     }).then((response)=>{
                         return response.json();
                     }).then((data)=>{
                         if(data.ok == 1){
-                            let questionIndex = $(`#${questionID}`);
-                            questionIndex.html(data.value.question);
+                            let questionIndex = $(`#${vote1ID}`);
+                            questionIndex.html(data.value.ans1votes);
                         }
                     });
                 });
@@ -124,7 +123,8 @@
                 e.preventDefault();
                 fetch('/',{
                     method : 'post',
-                    body : JSON.stringify({question: questionInput.val(), answer1 : answer1Input.val(), answer2 : answer2Input.val(), ans1votes : 0, ans2votes : 0}),
+                    body : JSON.stringify({question: questionInput.val(), answer1 : answer1Input.val(), 
+                        answer2 : answer2Input.val(), ans1votes : 0, ans2votes : 0}),
                     headers : {
                         "Content-Type" : "application/json; charset=utf-8"
                     }
