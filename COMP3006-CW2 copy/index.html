@@ -74,13 +74,16 @@
             const displayQuestions = (data)=>{
                 data.forEach((question)=>{
                     let ids = buildIDs(question);
+                    // appends templates to display
                     display.append(buildTemplate(question,ids));
+                    // add vote functionality to each question card
                     voteOne(question,ids.questionID,ids.vote1ID,ids.vote2ID);
                     voteTwo(question,ids.questionID,ids.vote1ID,ids.vote2ID)
                 })
             }
 
             const buildIDs = (question)=>{
+                // builds a set of unique ids for each documents attribute
                 return {
                     vote1ID : "vote1_" + question._id,
                     vote2ID : "vote2_" + question._id,
@@ -90,12 +93,12 @@
             }
 
             const buildTemplate = (question,ids)=>{
+                // logic for vote bar sizing
                 const totalVotes = question.ans1votes + question.ans2votes;
                 const sizeLeft = question.ans1votes / totalVotes * 100;
-                console.log("Size left: ",sizeLeft);
                 const sizeRight = 100 - sizeLeft;
-                console.log("Size Right: ",sizeRight);
-                console.log("Total votes: ",totalVotes);
+                // create card element
+                // attach unique ids and display data
                 return `<div class="card" id="${ids.listItemID}>
                             <div class="row">
                                 <div class="card-title " id="${ids.questionID}">${question.question}</div>
@@ -114,7 +117,9 @@
             
             const voteOne = (question,questionID,vote1ID,vote2ID)=>{
                 let vote1btn = $(`#${vote1ID}`);
+                // vote type to be passed to API
                 let voteType = "ans1votes"
+                // use put method, pass through vote option in body
                 vote1btn.click(()=>{
                     fetch(`/${question._id}`,{
                         method : "put",
@@ -126,8 +131,10 @@
                         return response.json();
                     }).then((data)=>{
                         if(data.ok == 1){
+                            // show vote to client
                             let answerIndex = $(`#${vote1ID}`);
                             answerIndex.html(question.answer1+" | Votes: "+data.value.ans1votes);
+                            // disable voting options, highlight voted option
                             $('#'+vote1ID).attr('disabled','disabled');
                             $('#'+vote1ID).css('background-color','aquamarine');
                             $('#'+vote2ID).attr('disabled','disabled');
@@ -159,7 +166,7 @@
                     });
                 });
             };
-
+            // reset form values to blank
             const resetFormInput = ()=>{
                 questionInput.val('');
                 answer1Input.val('');
