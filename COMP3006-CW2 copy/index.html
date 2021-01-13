@@ -42,6 +42,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.5/socket.io.js"></script>
 
     <script>
+        // socket client connection
         $(function () {
             const socket = io();
             socket.on('connect',function(){
@@ -56,16 +57,60 @@
             const answer1Input = $("#answer1Input");
             const answer2Input = $("#answer2Input");
 
+            // get all questions
             const getQuestions = () =>{
+                // make a get request
                 fetch('/getQuestions',{method : "get"}).then((response)=>{
+                    // return response
                     return response.json();
                 }).then((data)=>{
-                    console.log(data);
+                    // pass data to display function
                     displayQuestions(data);
                 });
             }
 
             getQuestions()
+
+            const displayQuestions = (data)=>{
+                data.forEach((question)=>{
+                    let ids = buildIDs(question);
+                    display.append(buildTemplate(question,ids));
+                    voteOne(question,ids.questionID,ids.vote1ID,ids.vote2ID);
+                    voteTwo(question,ids.questionID,ids.vote1ID,ids.vote2ID)
+                })
+            }
+
+            const buildIDs = (question)=>{
+                return {
+                    vote1ID : "vote1_" + question._id,
+                    vote2ID : "vote2_" + question._id,
+                    listItemID : "listItem_" + question._id,
+                    questionID : "question_" + question._id
+                }
+            }
+
+            const buildTemplate = (question,ids)=>{
+                const totalVotes = question.ans1votes + question.ans2votes;
+                const sizeLeft = question.ans1votes / totalVotes * 100;
+                console.log("Size left: ",sizeLeft);
+                const sizeRight = 100 - sizeLeft;
+                console.log("Size Right: ",sizeRight);
+                console.log("Total votes: ",totalVotes);
+                return `<div class="card" id="${ids.listItemID}>
+                            <div class="row">
+                                <div class="card-title " id="${ids.questionID}">${question.question}</div>
+                                    <div class="btn-group">
+                                        <div class="btn btn-primary" id="voteBarLeft" style="width:${sizeLeft}%"></div>
+                                        <div class="btn btn-danger" id="voteBarRight" style="width:${sizeRight}%"></div>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button class="btn" type="button" id="${ids.vote1ID}">${question.answer1} | Votes: ${question.ans1votes}</button>
+                                        <button class="btn" type="button" id="${ids.vote2ID}">${question.answer2} | Votes: ${question.ans2votes}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+            }
             
             const voteOne = (question,questionID,vote1ID,vote2ID)=>{
                 let vote1btn = $(`#${vote1ID}`);
@@ -119,47 +164,6 @@
                 questionInput.val('');
                 answer1Input.val('');
                 answer2Input.val('');
-            }
-
-            const buildIDs = (question)=>{
-                return {
-                    vote1ID : "vote1_" + question._id,
-                    vote2ID : "vote2_" + question._id,
-                    listItemID : "listItem_" + question._id,
-                    questionID : "question_" + question._id
-                }
-            }
-
-            const buildTemplate = (question,ids)=>{
-                const totalVotes = question.ans1votes + question.ans2votes;
-                const sizeLeft = question.ans1votes / totalVotes * 100;
-                console.log("Size left: ",sizeLeft);
-                const sizeRight = 100 - sizeLeft;
-                console.log("Size Right: ",sizeRight);
-                console.log("Total votes: ",totalVotes);
-                return `<div class="card" id="${ids.listItemID}>
-                            <div class="row">
-                                <div class="card-title " id="${ids.questionID}">${question.question}</div>
-                                    <div class="btn-group">
-                                        <div class="btn btn-primary" id="voteBarLeft" style="width:${sizeLeft}%"></div>
-                                        <div class="btn btn-danger" id="voteBarRight" style="width:${sizeRight}%"></div>
-                                    </div>
-                                    <div class="btn-group">
-                                        <button class="btn" type="button" id="${ids.vote1ID}">${question.answer1} | Votes: ${question.ans1votes}</button>
-                                        <button class="btn" type="button" id="${ids.vote2ID}">${question.answer2} | Votes: ${question.ans2votes}</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
-            }
-
-            const displayQuestions = (data)=>{
-                data.forEach((question)=>{
-                    let ids = buildIDs(question);
-                    display.append(buildTemplate(question,ids));
-                    voteOne(question,ids.questionID,ids.vote1ID,ids.vote2ID);
-                    voteTwo(question,ids.questionID,ids.vote1ID,ids.vote2ID)
-                })
             }
 
             form.submit((e)=>{
